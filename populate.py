@@ -1,80 +1,102 @@
 from random import *
 
-ivm = []
-prateleira = []
-categoria = []
-produto_categoria = {}
-produto = []
-ponto_retalho = []
-retalhista = []
-c = 0
-p = 0
+ivms = []
+shelves = []
+categories = []
+categoryProducts = {}
+products = []
+retailPoints = []
+retailers = []
 
 
-def createCategory(f, s):
-    global categoria
-    global c
-    global p
-    categoria += (f"CATEGORIA_{c}", )
-    c += 1
-    f.write(f"insert into categoria values ('{categoria[-1]}')\n")
-    if (len(s) > 1):
-        f.write(f"insert into tem_outra values {(s[-1], categoria[-1])}\n")
-    if (random() > 0.8):
-        f.write(f"insert into super_categoria values {(categoria[-1],)}\n")
-        for _ in range(randint(1, 5)):
-            createCategory(f, s + (categoria[-1], ))
+def insert(f, into, values):
+    if len(values) == 1:
+        f.write(f"insert into {into} values ({repr(values[0])})\n")
     else:
-        f.write(f"insert into categoria_simples values ('{categoria[-1]}')\n")
+        f.write(f"insert into {into} values {values}\n")
+
+
+def createCategory(f, s=[]):
+    global categories
+    cat = (f"CATEGORIA_{len(categories)}", )
+    insert(f, "categoria", cat)
+    categoryProducts[cat] = []
+    categories.append(cat)
+
+    if (s != []):
+        insert(f, "tem_outra", s[-1] + cat)
+
+    if (random() > 0.8):
+        insert(f, "super_categoria", cat)
+        for _ in range(randint(2, 5)):
+            createCategory(f, s + [cat])
+    else:
+        insert(f, "categoria_simples", cat)
         for _ in range(randint(1, 5)):
-            product = (randint(1000000000000, 9999999999999), )
-            f.write(
-                f"insert into produto values {product + (f'DESCRICAO_{p}', )}\n"
-            )
-            p += 1
-            for ean in s + (categoria[-1], ):
-                produto_categoria[ean] = product
-                f.write(
-                    f"insert into tem_categoria values {product + (ean,)}\n")
+            prod = (randint(1000000000000, 9999999999999), )
+            insert(f, "produto",
+                   prod + (f'DESCRICAO_PRODUTO_{len(products)}', ))
+            products.append(prod)
+            for c in s + [cat]:
+                categoryProducts[c].append(prod)
+                insert(f, "tem_categoria", prod + c)
 
 
 with open("populate.sql", "w") as f:
 
-    # Loop categoria
+    # Loop categories
     for _ in range(20):
-        createCategory(f, ())
+        createCategory(f)
+        f.write("\n")
 
-    # Loop ponto de retalho
+    # Loop retail points
     for i in range(20):
-        ponto_retalho.append(f"PONTO_DE_RETALHO_{i}")
-        f.write(
-            f"insert into ponto_de_retalho values {(ponto_retalho[-1], f'DISTRITO_{randint(1,18)}', f'CONCELHO_{randint(1,18)}')}\n"
-        )
+        retPoint = (f"PONTO_DE_RETALHO_{i}", )
+        insert(f, "ponto_de_retalho", retPoint)
+        retailPoints.append(retPoint)
+    f.write("\n")
 
-    # Loop retalhista
+    # Loop retailer
     for i in range(20):
-        retalhista.append(i)
-        f.write(
-            f"insert into retalhista values {(retalhista[-1], f'RETALHISTA_{randint(1,18)}')}\n"
-        )
+        ret = (i, )
+        insert(f, "retalhista", ret + (f'RETALHISTA_{i}', ))
+        retailers.append(ret)
+    f.write("\n")
 
-    # Loop fabricante
+    # Loop manufacturers
     for i in range(10):
-        # Loop num_serie
+        # Loop serial numbers
         for j in range(randint(5, 30)):
-            ivm.append((j, f"FABRICANTE_{i}"))
-            f.write(f"insert into ivm values {ivm[-1]}\n")
-            f.write(
-                f"insert into instalada_em values {ivm[-1] + tuple(choices(ponto_retalho))}\n"
-            )
+            ivm = (j, f"FABRICANTE_{i}")
+            insert(f, "ivm", ivm)
+            insert(f, "instalada_em", ivm + choice(retailPoints))
+            ivms.append(ivm)
+            catPlans = {}
 
-            # Loop prateleira
+            # Loop shelves
             for k in range(randint(5, 10)):
-                cat = choice(categoria)
-                prateleira.append((k, ) + ivm[-1])
-                f.write(
-                    f"insert into prateleira values {prateleira[-1] + (randint(10,30), cat)}\n"
-                )
+                shelf = (k, ) + ivm
+                cat = choice(categories)
+                insert(f, "prateleira", shelf + (randrange(10, 30), ) + cat)
+                if (cat not in catPlans.keys()):
+                    catPlans[cat] = []
 
-                #for _ in range(3):
-                #    f.write(f"insert into planograma values {prateleira[-1] + (randint(10,30), cat)}\n")
+                possibleProds = categoryProducts[cat]
+                for prod in sample(possibleProds, min(len(possibleProds), 3)):
+                    plan = prod + shelf
+                    insert(f, "planograma",
+                           plan + (randint(1, 5), randint(7, 30)))
+                    catPlans[cat].append(plan)
+
+            for cat in catPlans.keys():
+                ret = choice(retailers)
+                insert(f, "responsavel_por", cat + ret + ivm)
+
+                for plan in catPlans[cat]:
+                    for _ in range(randint(1, 4)):
+                        insert(
+                            f, "evento_reposicao", plan +
+                            (f"2021.{randint(0,365)}", randint(2, 7)) + ret)
+
+print(f"Categories: {len(categories)}")
+print(f"Products: {len(products)}")
