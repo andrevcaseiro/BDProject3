@@ -17,24 +17,24 @@ drop table if exists evento_reposicao;
 --  Table creation --
 --------------------------------------------------
 
-create or replace table categoria (
+create table categoria (
     nome_categoria varchar(80) not null unique,
     constraint pk_categoria primary key(nome_categoria)
 );
 
-create or replace table categoria_simples (
+create table categoria_simples (
     nome_categoria varchar(80) not null unique,
     constraint pk_categoria_simples primary key(nome_categoria),
     constraint fk_cat_catsimp foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table super_categoria (
+create table super_categoria (
     nome_categoria varchar(80) not null unique,
     constraint pk_super_categoria primary key(nome_categoria),
     constraint pk_cat_supcat foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table tem_outra (
+create table tem_outra (
     super_categoria varchar(80) not null,
     nome_categoria varchar(80) not null unique,
     constraint pk_tem_outra primary key(nome_categoria),
@@ -42,13 +42,13 @@ create or replace table tem_outra (
     constraint fk_cat foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table produto (
+create table produto (
     ean int not null unique,
     descricao varchar(200) not null,
     constraint pk_ean primary key(ean)
 );
 
-create or replace table tem_categoria (
+create table tem_categoria (
     ean int not null unique,
     nome_categoria varchar(80) not null,
     constraint pk_temcat primary key(ean, nome_categoria),
@@ -56,20 +56,20 @@ create or replace table tem_categoria (
     constraint fk_cat_prod foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table IVM (
+create table IVM (
     num_serie int not null unique,
     fabricante varchar(80) not null unique,
     constraint pk_ivm primary key(num_serie, fabricante)
 );
 
-create or replace table ponto_de_retalho (
+create table ponto_de_retalho (
     nome_retalho varchar(80) not null unique,
     distrito varchar(80) not null unique,
     concelho varchar(80) not null unique,
     constraint pk_retalho primary key(nome_retalho)
 );
 
-create or replace table instalada_em (
+create table instalada_em (
     num_serie int not null unique,
     fabricante varchar(80) not null unique,
     ivm_local varchar(80) not null unique,
@@ -78,7 +78,7 @@ create or replace table instalada_em (
     constraint fk_inst_ret foreign key(ivm_local) references ponto_de_retalho(nome_retalho)
 );
 
-create or replace table prateleira (
+create table prateleira (
     nro int not null,
     num_serie int not null,
     fabricante varchar(80) not null,
@@ -89,7 +89,7 @@ create or replace table prateleira (
     constraint fk_prat_cat foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table planograma (
+create table planograma (
     ean int not null,
     nro int not null,
     num_serie int not null,
@@ -102,13 +102,13 @@ create or replace table planograma (
                            references prateleira(nro, num_serie, fabricante)
 );
 
-create or replace table retalhista (
+create table retalhista (
     tin int not null unique,
     nome_retalhista varchar(80) not null unique,
     constraint pk_retalhista primary key(tin)
 );
 
-create or replace table responsavel_por (
+create table responsavel_por (
     num_serie int not null,
     fabricante varchar(80) not null,
     nome_categoria varchar(80) not null,
@@ -119,7 +119,7 @@ create or replace table responsavel_por (
     constraint fk_resppor_cat foreign key(nome_categoria) references categoria(nome_categoria)
 );
 
-create or replace table evento_reposicao (
+create table evento_reposicao (
     ean int not null,
     nro int not null,
     num_serie int not null,
