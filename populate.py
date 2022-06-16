@@ -11,9 +11,9 @@ retailers = []
 
 def insert(f, into, values):
     if len(values) == 1:
-        f.write(f"insert into {into} values ({repr(values[0])})\n")
+        f.write(f"insert into {into} values ({repr(values[0])});\n")
     else:
-        f.write(f"insert into {into} values {values}\n")
+        f.write(f"insert into {into} values {values};\n")
 
 
 def createCategory(f, s=[]):
@@ -42,7 +42,16 @@ def createCategory(f, s=[]):
                 insert(f, "tem_categoria", prod + c)
 
 
+with open("createTables.sql", "r") as f:
+    read_data = f.read()
+
 with open("populate.sql", "w") as f:
+
+    f.write(read_data)
+
+    f.write("\n--------------------------------------------------\n")
+    f.write("-- Populate tables --\n")
+    f.write("--------------------------------------------------\n\n")
 
     # Loop categories
     for _ in range(20):
@@ -93,10 +102,12 @@ with open("populate.sql", "w") as f:
                 insert(f, "responsavel_por", cat + ret + ivm)
 
                 for plan in catPlans[cat]:
-                    for _ in range(randint(1, 4)):
+                    for _ in range(randint(0, 4)):
                         insert(
                             f, "evento_reposicao", plan +
                             (f"2021.{randint(0,365)}", randint(2, 7)) + ret)
+            
+            f.write("\n")
 
 print(f"Categories: {len(categories)}")
 print(f"Products: {len(products)}")
