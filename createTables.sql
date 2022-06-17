@@ -39,13 +39,15 @@ create table tem_outra (
     nome_categoria varchar(80) not null,
     constraint pk_tem_outra primary key(nome_categoria),
     constraint fk_outra_sup foreign key(super_categoria) references super_categoria(nome_categoria),
-    constraint fk_outra_cat foreign key(nome_categoria) references categoria(nome_categoria)
+    constraint fk_outra_cat foreign key(nome_categoria) references categoria(nome_categoria),
+    constraint ck_cat_supcat check(super_categoria != nome_categoria)
 );
 
 create table produto (
     ean bigint not null,
     descricao varchar(200) not null,
-    constraint pk_produto primary key(ean)
+    constraint pk_produto primary key(ean),
+    constraint ck_prod check(ean <= 9999999999999 and ean >= 1000000000000)
 );
 
 create table tem_categoria (
