@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Categorias</title>
+</head>
+<body>
+{% if subcatgory %}
+<t3>Lista das subcatgorias de {{subcatgory}}</t3>
+{% else %}
+<t3>Lista das categorias</t3>
+{% endif %}
+{% if cursor %}
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>Nome da categoria</th>
+                <th>Apagar</th>
+                <th>Listar sub categorias</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cursor %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td><a href="categorias/remover?nome_categoria={{ record[0] }}">X</a></td>
+                    <td><a href="subcategorias?nome_categoria={{ record[0] }}">X</a></td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">
+                    <a href="categorias/inserir">Inserir categoria</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+{% endif %}
+</body>
+</html>
