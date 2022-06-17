@@ -26,7 +26,7 @@ def createCategory(f, s=[]):
     if (s != []):
         insert(f, "tem_outra", s[-1] + cat)
 
-    if (random() > 0.8):
+    if (len(s) < 2):
         insert(f, "super_categoria", cat)
         for _ in range(randint(2, 5)):
             createCategory(f, s + [cat])
@@ -35,7 +35,7 @@ def createCategory(f, s=[]):
         for _ in range(randint(1, 5)):
             prod = (randint(1000000000000, 9999999999999), )
             insert(f, "produto",
-                   prod + (f'DESCRICAO_PRODUTO_{len(products)}', ))
+                   prod + cat + (f'DESCRICAO_PRODUTO_{len(products)}', ))
             products.append(prod)
             for c in s + [cat]:
                 categoryProducts[c].append(prod)
@@ -49,12 +49,15 @@ with open("populate.sql", "w") as f:
 
     f.write(read_data)
 
+    s = randint(1, 99999)
+    seed(s)
+    print(f"Seed: {s}")
     f.write("\n--------------------------------------------------\n")
-    f.write("-- Populate tables --\n")
+    f.write(f"-- Populate tables generated using seed {s} --\n")
     f.write("--------------------------------------------------\n\n")
 
     # Loop categories
-    for _ in range(20):
+    for _ in range(5):
         createCategory(f)
         f.write("\n")
 
