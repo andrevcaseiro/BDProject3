@@ -59,9 +59,10 @@ with open("populate.sql", "w") as f:
         f.write("\n")
 
     # Loop retail points
-    for i in range(20):
+    for i in range(40):
         retPoint = (f"PONTO_DE_RETALHO_{i}", )
-        insert(f, "ponto_de_retalho", retPoint)
+        district = randint(1,5)
+        insert(f, "ponto_de_retalho", retPoint + (f"Distrito_{district}", f"CONCELHO_{district}_{randint(1,5)}"))
         retailPoints.append(retPoint)
     f.write("\n")
 
@@ -102,10 +103,10 @@ with open("populate.sql", "w") as f:
                 insert(f, "responsavel_por", cat + ret + ivm)
 
                 for plan in catPlans[cat]:
-                    for _ in range(randint(0, 4)):
+                    for day in sample(range(1,365), randint(0, 4)):
                         insert(
                             f, "evento_reposicao", plan +
-                            (f"2021.{randint(0,365)}", randint(2, 7)) + ret)
+                            (f"2021.{day:03}", randint(2, 7)) + ret)
             
             f.write("\n")
 
