@@ -45,10 +45,10 @@ create table tem_outra (
 
 create table produto (
     ean bigint not null,
-    cat varchar(80) not null,
+    nome_categoria varchar(80) not null,
     descricao varchar(200) not null,
     constraint pk_produto primary key(ean),
-    constraint fk_prod_cat foreign key(cat) references categoria(nome_categoria),
+    constraint fk_prod_cat foreign key(nome_categoria) references categoria(nome_categoria),
     constraint ck_prod check(ean <= 9999999999999 and ean >= 1000000000000)
 );
 
