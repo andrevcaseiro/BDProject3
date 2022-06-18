@@ -1,9 +1,10 @@
-create materialized view vendas(ean, cat, ano, trimestre, dia_mes, dia_semana, distrito, concelho, unidades) 
+create materialized view vendas(ean, cat, ano, trimestre, mes, dia_mes, dia_semana, distrito, concelho, unidades) 
 as 
 select o.ean as ean,
 	o.nome_categoria as cat,
 	extract(year from instante) as ano,
 	extract(quarter from instante) as trimestre,
+	extract(month from instante) as mes,
 	extract(day from instante) as dia_mes,
 	extract(dow from instante) as dia_semana,
 	r.distrito as distrito,

@@ -2,7 +2,7 @@
 -- 1 --
 select dia_semana, concelho, sum(unidades) as soma
 from vendas
-where trimestre = 2  
+where mes between 3 and 5 
 group by grouping sets((dia_semana), (concelho), ());
 
 -- 2 --
