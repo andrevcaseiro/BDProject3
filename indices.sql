@@ -46,4 +46,10 @@ WHERE P.descricao = 'DESCRICAO_PRODUTO_1'
 -- resultado = 546
 ----------------------------------------------------------------------------------
 
--- btree para o nome_categoria da tem_categoria e btree para a descricao do produto????
+-- indices do tipo btree para o atributo nome_categoria da tabela tem_categoria e 
+-- tambem para o atributo descricao da tabela produto????
+
+-- indice do tipo btree no atributo descricao da tabela produto pois estamos 
+-- interessados em reconhecer padrões em que a primeira parte é especificada
+-- logo queremos um indice com as informações ordenadas. Adiciona-mos ao atributo
+-- descricao porque é o que tem maior seletividade.
