@@ -1,12 +1,30 @@
 -- Indices --
 
 -- 1 --
+explain analyze
 select distinct R.nome_retalhista
 from retalhista R, responsavel_por P
 where R.tin = P.tin and P.nome_categoria = 'CATEGORIA_5'
 
 alter index retalhista_tin_index on retalhista using hash (tin);
-create index if not exists respor_cat_index on responsavel_por using hash (tin);
+create index if not exists respor_cat_index on responsavel_por using hash (nome_categoria) --> 0.450
+create index if not exists respor_cat_index on responsavel_por using hash (tin); --> 0.505
+create index if not exists respor_cat_index on responsavel_por (tin); --> 0.500
+create index if not exists respor_cat_index on responsavel_por (nome_categoria); -->0.500
+create index if not exists respor_cat_index on responsavel_por (nome_categoria, tin); --> 0.440
+drop index respor_cat_index; --> 0.5; 1.265
+
+--------------------------- analise de seletividade para o 1 --------------------
+select count(distinct R.nome_retalhista)
+from retalhista R, responsavel_por P
+where R.tin = P.tin 
+-- resultado = 20
+
+select count(distinct R.nome_retalhista)
+from retalhista R, responsavel_por P
+where P.nome_categoria = 'CATEGORIA_5' 
+-- resultado = 20
+---------------------------------------------------------------------------------
 
 -- Dado que esta query implica filtar os valores da tabela retalhista por
 -- uma igualdade com um outro valor, modifica-se o index dessa tabela no 
