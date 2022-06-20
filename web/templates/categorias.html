@@ -1,41 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Categorias</title>
 </head>
+
 <body>
-{% if subcatgory %}
-<t3>Lista das subcatgorias de {{subcatgory}}</t3>
-{% else %}
-<t3>Lista das categorias</t3>
-{% endif %}
-{% if cursor %}
+    <h1>Categorias</h1>
+    {% if message %}
+    <hr>
+    <p><samp>{{ message }}</samp></p>
+    {% endif %}
+    <hr>
+    <h2>Inserir categoria</h2>
+    <form action="categorias" method="post">
+        <input type="hidden" name="action" value="insert"/>
+        <label for="nome_categoria">Nome da categoria:</label><br>
+        <input type="text" id="nome_categoria" name="nome_categoria" required/><br><br>
+        <input type="submit" value="Inserir" />
+    </form>
+    <hr>
+    <h2>Lista de categorias</h2>
+    {% if cursor %}
     <table border="2px">
         <thead>
             <tr>
                 <th>Nome da categoria</th>
-                <th>Apagar</th>
+                <th>Remover</th>
                 <th>Listar sub categorias</th>
             </tr>
         </thead>
         <tbody>
             {% for record in cursor %}
-                <tr>
-                    <td>{{ record[0] }}</td>
-                    <td><a href="categorias/remover?nome_categoria={{ record[0] }}">X</a></td>
-                    <td><a href="subcategorias?nome_categoria={{ record[0] }}">X</a></td>
-                </tr>
-            {% endfor %}
             <tr>
-                <td colspan="3">
-                    <a href="categorias/inserir">Inserir categoria</a>
+                <td>{{ record['nome_categoria'] }}</td>
+                <td>
+                    <form action="categorias" method="post">
+                        <input type="hidden" name="action" value="delete"/>
+                        <input type="hidden" name="nome_categoria"  value="{{ record['nome_categoria'] }}"/>
+                        <input type="submit" value="Remover" />
+                    </form>
                 </td>
+                <td align="center"><a href="subcategorias?nome_categoria={{ record['nome_categoria'] }}">X</a></td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
-{% else %}
+    {% else %}
     <p> Erro: não foi possível obter dados da base de dados!</p>
-{% endif %}
+    {% endif %}
 </body>
+
 </html>

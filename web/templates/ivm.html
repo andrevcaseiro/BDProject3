@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>IVMs</title>
+</head>
+
+<body>
+    <h1>IVMs</h1>
+    {% if message %}
+    <hr>
+    <p><samp>{{ message }}</samp></p>
+    {% endif %}
+    <hr>
+    <h2>Lista de IVMs</h2>
+    {% if cursor %}
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>Fabricante</th>
+                <th>Nº série</th>
+                <th>Listar sub categorias</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cursor %}
+            <tr>
+                <td>{{ record['fabricante'] }}</td>
+                <td align="right">{{ record['num_serie'] }}</td>
+                </td>
+                <td>empty</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+    {% endif %}
+</body>
+
+</html>

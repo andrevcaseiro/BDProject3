@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Categorias</title>
+</head>
+
+<body>
+    <h1>{{category}}</h1>
+    <hr>
+    <h2>Lista das subcategorias para {{category}}</h2>
+    {% if cursor is iterable %}
+    <ul>
+        {%- for record in cursor recursive %}
+        <li>
+            {{ record[0] }}
+            {% if record[1] is iterable%}
+            <ul class>{{ loop(record[1]) }}</ul>
+            {%- endif %}
+        </li>
+        {%- endfor %}
+    </ul>
+    {% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+    {% endif %}
+</body>
+
+</html>

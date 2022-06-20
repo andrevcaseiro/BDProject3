@@ -19,35 +19,71 @@ DB_CONNECTION_STRING = "host=%s dbname=%s user=%s password=%s" % (
 
 app = Flask(__name__)
 
-@app.route("/categorias")
+
+@app.route("/categorias", methods=["GET", "POST"])
 def list_categories():
     dbConn = None
     cursor = None
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        message = None
+        if request.method == "POST":
+            try:
+                action = request.form["action"]
+                if action == "insert":
+                    try:
+                        query = "INSERT INTO categoria VALUES (%s);"
+                        data = (request.form["nome_categoria"], )
+                        cursor.execute(query, data)
+                        message = f"Nova categoria inserida: {data[0]}"
+                    except Exception as e:
+                        message = f"Falha ao inserir categoria: {e}"
+                    finally:
+                        dbConn.commit()
+                elif action == "delete":
+                    try:
+                        query = "DELETE FROM categoria WHERE nome_categoria = %s;"
+                        data = (request.form["nome_categoria"], )
+                        cursor.execute(query, data)
+                        message = f"Categoria removida: {data[0]}"
+                    except Exception as e:
+                        message = f"Falha ao remover categoria: {e}"
+                    finally:
+                        dbConn.commit()
+            except Exception as e:
+                message = f"Falha: {e}"
+
         query = "SELECT * FROM categoria;"
         cursor.execute(query)
-        return render_template("categorias.html", cursor=cursor)
+        return render_template("categorias.html",
+                               cursor=cursor,
+                               message=message)
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:
         cursor.close()
         dbConn.close()
 
-@app.route("/categorias/remover")
-def delete_category():
-    try:
-        return render_template("remover_categoria.html", params=request.args)
-    except Exception as e:
-        return str(e)
 
-@app.route("/categorias/inserir")
-def insert_category():
+@app.route("/ivm")
+def list_ivms():
+    dbConn = None
+    cursor = None
     try:
-        return render_template("inserir_categoria.html", params=request.args)
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        query = "SELECT * FROM ivm;"
+        cursor.execute(query)
+        return render_template("ivm.html", cursor=cursor)
     except Exception as e:
-        return str(e)
+        return str(e)  # Renders a page with the error.
+    finally:
+        cursor.close()
+        dbConn.close()
+
 
 @app.route("/subcategorias")
 def list_subcategories():
@@ -56,10 +92,10 @@ def list_subcategories():
         query = "SELECT nome_categoria FROM tem_outra WHERE super_categoria = %s;"
         data = (super_categoria, )
         cursor.execute(query, data)
-        res = list(cursor)
-        for cat in res:
-            res += find_subcategories(cat[0])
-        
+        res = []
+        for cat in list(cursor):
+            res.append((cat[0], find_subcategories(cat[0])))
+
         return res
 
     dbConn = None
@@ -67,13 +103,17 @@ def list_subcategories():
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        subcategories = find_subcategories(request.args["nome_categoria"])
-        return render_template("categorias.html", subcatgory=request.args["nome_categoria"], cursor=subcategories)
+        cat = request.args["nome_categoria"]
+        subcategories = find_subcategories(cat)
+        return render_template("subcategorias.html",
+                               cursor=subcategories,
+                               category=cat)
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:
         cursor.close()
         dbConn.close()
+
 
 @app.route("/update", methods=["POST"])
 def update_balance():
@@ -83,7 +123,8 @@ def update_balance():
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         nome_categoria = request.form["nome_categoria"]
-        query = "DELETE FROM categoria WHERE nome_categoria = %s"
+        query = "INSERT INTO categoria VALUES (%s);"
+        #query = "DELETE FROM categoria WHERE nome_categoria = %s"
         data = (nome_categoria, )
         cursor.execute(query, data)
         return query
@@ -93,5 +134,6 @@ def update_balance():
         dbConn.commit()
         cursor.close()
         dbConn.close()
+
 
 CGIHandler().run(app)
