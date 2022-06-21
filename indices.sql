@@ -6,7 +6,7 @@ select distinct R.nome_retalhista
 from retalhista R, responsavel_por P
 where R.tin = P.tin and P.nome_categoria = 'CATEGORIA_5'
 
-alter index retalhista_tin_index on retalhista using hash (tin);
+alter table retalhista alter index retalhista_tin_index on retalhista using hash (tin);
 create index if not exists respor_cat_index on responsavel_por using hash (nome_categoria); --> 0.450
 create index if not exists respor_tin_index on responsavel_por using hash (tin); --> 0.505
 create index if not exists respor_tin_index on responsavel_por (tin); --> 0.500
@@ -35,14 +35,19 @@ from responsavel_por p
 -- resultado = 20
 ---------------------------------------------------------------------------------
 
+create index if not exists respor_cat_index on responsavel_por using hash (nome_categoria);
+create index if not exists respor_tin_index on responsavel_por using hash (tin);
+create index if not exists retalhista_nome_index on retalhista (nome_retalhista);
+
 -- Dado que esta query implica filtar os valores da tabela retalhista por
 -- uma igualdade com um outro valor, modifica-se o index dessa tabela no 
 -- tin para um do tipo hash pois este é o melhor para seleções por igualdade
 -- (modifica-se e não cria-se pois o index já existe, dado que tin é chave 
 -- primária da tabela retalhista).
--- Criou-se também um índice para o atributo tin e para o nome_categoria da 
--- tabela responsavel_por, com o tin primeiro pois tem uma maior 
--- seletividade.
+-- Criou-se também dois índices para o atributo tin e para o nome_categoria da 
+-- tabela responsavel_por, ambos do tipo hash pois queremos testar igualdades.
+-- Devido ao distinct para selecionar o nome_retalhista queremos um indice que 
+-- acelere a ordenação deste atributo e portanto temos um do tipo B+tree
 
 
 -- 2 --
@@ -61,8 +66,9 @@ drop index --> 5.100
 
 -- Índices que se podia pensar criar:
 --   - um de tipo hash na tabela produto para o nome_categoria;
---   - um de tipo hash ou btree na tabela tem_categoria para o nome_categoria;
---   - um de tipo btree na tabela produto para a descricao.
+--   - um de tipo hash ou b+tree na tabela tem_categoria para o nome_categoria;
+--   - um de tipo b+tree na tabela produto para a descricao.
+--   - um para o ean na tem_categoria
 
 --------------------------- analise de seletividade para o 2 --------------------
 SELECT count(t.nome_categoria)
