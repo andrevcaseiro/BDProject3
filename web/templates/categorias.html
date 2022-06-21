@@ -7,6 +7,12 @@
 </head>
 
 <body>
+    <nav>
+        <a href="categorias">Categorias</a> |
+        <a href="retalhistas">Retalhistas</a> |
+        <a href="ivm">IVMs</a>
+    </nav>
+    <hr>
     <h1>Categorias</h1>
     {% if message %}
     <hr>
@@ -15,9 +21,9 @@
     <hr>
     <h2>Inserir categoria</h2>
     <form action="categorias" method="post">
-        <input type="hidden" name="action" value="insert"/>
+        <input type="hidden" name="action" value="insert" />
         <label for="nome_categoria">Nome da categoria:</label><br>
-        <input type="text" id="nome_categoria" name="nome_categoria" required/><br><br>
+        <input type="text" id="nome_categoria" name="nome_categoria" required /><br><br>
         <input type="submit" value="Inserir" />
     </form>
     <hr>
@@ -37,8 +43,8 @@
                 <td>{{ record['nome_categoria'] }}</td>
                 <td>
                     <form action="categorias" method="post">
-                        <input type="hidden" name="action" value="delete"/>
-                        <input type="hidden" name="nome_categoria"  value="{{ record['nome_categoria'] }}"/>
+                        <input type="hidden" name="action" value="delete" />
+                        <input type="hidden" name="nome_categoria" value="{{ record['nome_categoria'] }}" />
                         <input type="submit" value="Remover" />
                     </form>
                 </td>
