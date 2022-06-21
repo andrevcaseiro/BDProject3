@@ -66,6 +66,55 @@ def list_categories():
         cursor.close()
         dbConn.close()
 
+@app.route("/retalhistas", methods=["GET", "POST"])
+def list_retailers():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        message = None
+        if request.method == "POST":
+            try:
+                action = request.form["action"]
+                if action == "insert":
+                    try:
+                        data = (request.form["tin"], request.form["nome_retalhista"])
+                        query = "INSERT INTO retalhista VALUES (%s, %s);"
+                        cursor.execute(query, data)
+                        message = f"Novo retalhista inserido: {data}"
+                    except Exception as e:
+                        message = f"Falha ao inserir retalhista: {e}"
+                    finally:
+                        dbConn.commit()
+                elif action == "delete":
+                    try:
+                        data = (request.form["tin"], )
+                        query = "DELETE FROM evento_reposicao WHERE tin = %s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM responsavel_por WHERE tin = %s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM retalhista WHERE tin = %s;"
+                        cursor.execute(query, data)
+                        message = f"Retalhista removido: {data[0]}"
+                    except Exception as e:
+                        message = f"Falha ao remover retalhista: {e}"
+                    finally:
+                        dbConn.commit()
+            except Exception as e:
+                message = f"Falha: {e}"
+
+        query = "SELECT * FROM retalhista;"
+        cursor.execute(query)
+        return render_template("retalhistas.html",
+                               cursor=cursor,
+                               message=message)
+    except Exception as e:
+        return str(e)  # Renders a page with the error.
+    finally:
+        cursor.close()
+        dbConn.close()
 
 @app.route("/ivm")
 def list_ivms():

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Retalhistas</title>
+</head>
+
+<body>
+    <h1>Retalhistas</h1>
+    {% if message %}
+    <hr>
+    <p><samp>{{ message }}</samp></p>
+    {% endif %}
+    <hr>
+    <h2>Inserir retalhista</h2>
+    <form action="retalhistas" method="post">
+        <input type="hidden" name="action" value="insert" />
+        <label for="tin">TIN do retalhista:</label><br>
+        <input type="number" id="tin" name="tin" min="0" required /><br>
+        <label for="nome_retalhista">Nome do retalhista:</label><br>
+        <input type="text" id="nome_retalhista" name="nome_retalhista" required /><br><br>
+        <input type="submit" value="Inserir" />
+    </form>
+    <hr>
+    <h2>Lista de retalhistas</h2>
+    {% if cursor %}
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>TIN</th>
+                <th>Nome do retalhista</th>
+                <th>Remover</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cursor %}
+            <tr>
+                <td align="right">{{ record['tin'] }}</td>
+                <td>{{ record['nome_retalhista'] }}</td>
+                <td>
+                    <form action="retalhistas" method="post">
+                        <input type="hidden" name="action" value="delete" />
+                        <input type="hidden" name="tin" value="{{ record['tin'] }}" />
+                        <input type="submit" value="Remover" />
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+    {% endif %}
+</body>
+
+</html>
