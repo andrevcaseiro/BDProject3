@@ -13,7 +13,7 @@ except all
 select nome_retalhista
 from (
 	select nome_retalhista, nome_categoria
-	from retalhista, categoria
+	from retalhista, categoria_simples
 	except all
 	select nome_retalhista, nome_categoria
 	from retalhista natural join responsavel_por
