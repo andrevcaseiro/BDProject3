@@ -7,6 +7,12 @@
 </head>
 
 <body>
+    <nav>
+        <a href="categorias">Categorias</a> |
+        <a href="retalhistas">Retalhistas</a> |
+        <a href="ivm">IVMs</a>
+    </nav>
+    <hr>
     <h1>IVMs</h1>
     {% if message %}
     <hr>
@@ -20,7 +26,7 @@
             <tr>
                 <th>Fabricante</th>
                 <th>Nº série</th>
-                <th>Listar sub categorias</th>
+                <th>Listar eventos</th>
             </tr>
         </thead>
         <tbody>
@@ -28,8 +34,9 @@
             <tr>
                 <td>{{ record['fabricante'] }}</td>
                 <td align="right">{{ record['num_serie'] }}</td>
+                <td align="center">
+                    <a href="eventos?fabricante={{ record['fabricante'] }}&num_serie={{ record['num_serie'] }}">X</a>
                 </td>
-                <td>empty</td>
             </tr>
             {% endfor %}
         </tbody>

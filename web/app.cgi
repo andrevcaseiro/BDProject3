@@ -5,7 +5,7 @@ from flask import render_template, request
 import psycopg2
 import psycopg2.extras
 
-## SGBD configs
+# SGBD configs
 DB_HOST = "db.tecnico.ulisboa.pt"
 DB_USER = "ist199180"
 DB_DATABASE = DB_USER
@@ -66,6 +66,7 @@ def list_categories():
         cursor.close()
         dbConn.close()
 
+
 @app.route("/retalhistas", methods=["GET", "POST"])
 def list_retailers():
     dbConn = None
@@ -80,7 +81,8 @@ def list_retailers():
                 action = request.form["action"]
                 if action == "insert":
                     try:
-                        data = (request.form["tin"], request.form["nome_retalhista"])
+                        data = (request.form["tin"],
+                                request.form["nome_retalhista"])
                         query = "INSERT INTO retalhista VALUES (%s, %s);"
                         cursor.execute(query, data)
                         message = f"Novo retalhista inserido: {data}"
@@ -116,6 +118,7 @@ def list_retailers():
         cursor.close()
         dbConn.close()
 
+
 @app.route("/ivm")
 def list_ivms():
     dbConn = None
@@ -127,6 +130,36 @@ def list_ivms():
         query = "SELECT * FROM ivm;"
         cursor.execute(query)
         return render_template("ivm.html", cursor=cursor)
+    except Exception as e:
+        return str(e)  # Renders a page with the error.
+    finally:
+        cursor.close()
+        dbConn.close()
+
+
+@app.route("/eventos")
+def list_eventos():
+    dbConn = None
+    cursor = None
+    try:
+        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
+        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        num_serie = request.args["num_serie"]
+        fabricante = request.args["fabricante"]
+        query = "SELECT * FROM evento_reposicao WHERE num_serie = %s AND fabricante = %s;"
+        data = (num_serie, fabricante)
+        cursor.execute(query, data)
+        events = cursor.fetchall()
+
+        query = """SELECT p.nome_categoria, SUM(unidades) AS sum
+        FROM evento_reposicao NATURAL JOIN produto p
+        WHERE num_serie = %s AND fabricante = %s
+        GROUP BY nome_categoria;"""
+        cursor.execute(query, data)
+        cats = cursor.fetchall()
+
+        return render_template("eventos.html", events=events, cats=cats, num_serie=num_serie, fabricante=fabricante)
     except Exception as e:
         return str(e)  # Renders a page with the error.
     finally:

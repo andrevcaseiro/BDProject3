@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Categorias</title>
+</head>
+
+<body>
+    <nav>
+        <a href="categorias">Categorias</a> |
+        <a href="retalhistas">Retalhistas</a> |
+        <a href="ivm">IVMs</a>
+    </nav>
+    <hr>
+    <h1>Eventos da IVM <i>{{ num_serie }}</i> da fabricante <i>{{ fabricante }}</i></h1>
+    <hr>
+    <h2>Lista de eventos</h2>
+    {% if events %}
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>EAN do produto</th>
+                <th>Prateleira</th>
+                <th>Data</th>
+                <th>Unidades repostas</th>
+                <th>TIN do retalhista</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in events %}
+            <tr>
+                <td align="right">{{ record['ean'] }}</td>
+                <td align="right">{{ record['nro'] }}</td>
+                <td align="right">{{ record['instante'] }}</td>
+                <td align="right">{{ record['unidades'] }}</td>
+                <td align="right">{{ record['tin'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+    {% endif %}
+    <hr>
+    <h2>Lista de unidades repostas por categoria</h2>
+    {% if cats %}
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>Categoria</th>
+                <th>Unidades repostas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cats %}
+            <tr>
+                <td align="right">{{ record['nome_categoria'] }}</td>
+                <td align="right">{{ record['sum'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Erro: não foi possível obter dados da base de dados!</p>
+    {% endif %}
+</body>
+
+</html>

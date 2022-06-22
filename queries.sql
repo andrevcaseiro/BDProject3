@@ -21,8 +21,7 @@ from (
 
 select descricao
 from produto natural left join evento_reposicao
-group by ean, descricao
-having sum(CASE WHEN instante IS NULL THEN 0 ELSE 1 END) = 0;
+where nro is NULL;
 
 select descricao
 from produto natural join evento_reposicao
