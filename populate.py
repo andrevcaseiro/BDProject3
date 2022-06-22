@@ -3,6 +3,7 @@ from random import *
 ivms = []
 shelves = []
 categories = []
+simpleCats = []
 categoryProducts = {}
 products = []
 retailPoints = []
@@ -32,6 +33,7 @@ def createCategory(f, s=[]):
             createCategory(f, s + [cat])
     else:
         insert(f, "categoria_simples", cat)
+        simpleCats.append(cat)
         for _ in range(randint(1, 5)):
             prod = (randint(1000000000000, 9999999999999), )
             insert(f, "produto",
@@ -49,11 +51,11 @@ with open("populate.sql", "w") as f:
 
     f.write(read_data)
 
-    s = randint(1, 99999)
+    s = 31736 # randint(1, 99999)
     seed(s)
     print(f"Seed: {s}")
     f.write("\n--------------------------------------------------\n")
-    f.write(f"-- Populate tables generated using seed {s} --\n")
+    f.write(f"-- Populate tables, generated using seed {s} --\n")
     f.write("--------------------------------------------------\n\n")
 
     # Loop categories
@@ -112,6 +114,27 @@ with open("populate.sql", "w") as f:
                             (f"2021.{day:03}", randint(2, 7)) + ret)
             
             f.write("\n")
+    
+    # Create a retailer responsible for all simple categories
+    ret = (9999999, )
+    insert(f, "retalhista", ret + (f'RETALHISTA_9999999', ))
+    ivm = (9999999, f"FABRICANTE_{9999999}")
+    insert(f, "ivm", ivm)
+    for cat in simpleCats:
+        insert(f, "responsavel_por", cat + ret + ivm)
+    f.write("\n")
+    
+    # Create a product that was never resupplied
+    prod = (randint(1000000000000, 9999999999999), )
+    insert(f, "produto", prod + simpleCats[0] + (f'DESCRICAO_PRODUTO_9999999', ))
+    f.write("\n")
+
+    # Create a product that was always resupplied by the same retailer
+    prod = (randint(1000000000000, 9999999999999), )
+    insert(f, "produto", prod + simpleCats[0] + (f'DESCRICAO_PRODUTO_9999998', ))
+    plan = prod + (0, ) + ivms[0]
+    insert(f, "planograma", plan + (randint(1, 5), randint(7, 30)))
+    insert(f, "evento_reposicao", plan + (f"2022.001", randint(2, 7)) + ret)
 
 print(f"Categories: {len(categories)}")
 print(f"Products: {len(products)}")

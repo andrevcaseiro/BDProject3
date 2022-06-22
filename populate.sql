@@ -138,7 +138,7 @@ create table evento_reposicao (
 );
 
 --------------------------------------------------
--- Populate tables generated using seed 31736 --
+-- Populate tables, generated using seed 31736 --
 --------------------------------------------------
 
 insert into categoria values ('CATEGORIA_0');
@@ -16713,3 +16713,65 @@ insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021
 insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021.044', 6, 12);
 insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021.276', 3, 12);
 
+insert into retalhista values (9999999, 'RETALHISTA_9999999');
+insert into ivm values (9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_2', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_3', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_4', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_6', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_7', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_8', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_9', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_11', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_12', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_13', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_14', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_17', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_18', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_19', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_20', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_21', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_23', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_24', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_25', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_26', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_29', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_30', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_31', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_32', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_34', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_35', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_36', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_39', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_40', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_41', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_42', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_44', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_45', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_46', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_48', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_49', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_50', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_52', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_53', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_54', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_55', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_57', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_58', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_59', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_60', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_63', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_64', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_65', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_66', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_68', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_69', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_70', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_71', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_72', 9999999, 9999999, 'FABRICANTE_9999999');
+
+insert into produto values (3786180217281, 'CATEGORIA_2', 'DESCRICAO_PRODUTO_9999999');
+
+insert into produto values (5374220564091, 'CATEGORIA_2', 'DESCRICAO_PRODUTO_9999998');
+insert into planograma values (5374220564091, 0, 0, 'FABRICANTE_0', 1, 13);
+insert into evento_reposicao values (5374220564091, 0, 0, 'FABRICANTE_0', '2022.001', 5, 9999999);
