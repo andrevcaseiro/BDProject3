@@ -19,11 +19,11 @@ from (
 	from retalhista natural join responsavel_por
 ) as dont_include;
 
-select descricao
+select ean
 from produto natural left join evento_reposicao
 where nro is NULL;
 
-select descricao
+select ean
 from produto natural join evento_reposicao
-group by ean, descricao
+group by ean
 having count(distinct tin) = 1;
