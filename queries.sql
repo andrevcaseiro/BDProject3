@@ -24,6 +24,6 @@ from produto natural left join evento_reposicao
 where nro is NULL;
 
 select ean
-from produto natural join evento_reposicao
+from evento_reposicao
 group by ean
 having count(distinct tin) = 1;
