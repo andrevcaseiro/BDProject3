@@ -141,23 +141,36 @@ create table evento_reposicao (
 
 create or replace function eliminacao_categoria(cat_var varchar(80)) returns void
 as $$
-declare 
+declare
+	num int;
 	array_ean int array;
-	
 begin
 	-- obtem produtos com a categoria a eliminar
     select array_append(array_ean, ean)
-    from produto 
-    where nome_categoria = cat_var;
+    from produto p
+    where p.nome_categoria = cat_var;
 	
-	-- apaga os planogramas, os eventos_reposicao e as prateleiras
-	foreach ean slice 1 in array array_ean
+	-- apaga  os eventos_reposicao, os planogramas, as prateleiras, 
+	-- as entradas da tem_categoria e os produtos
+	foreach num slice 1 in array array_ean
 	loop
-		delete from evento_reposicao.e where e.ean = ean;
-		delete from planograma.p where p.ean = ean;
-		delete from prateleira.p where p.ean = ean;
-	end loop
+		delete from evento_reposicao e where e.ean = num;
+		delete from planograma p where p.ean = num;
+		delete from prateleira p where p.ean = num;
+		delete from tem_categoria t where t.ean = num;
+		delete from produto p where p.ean = num;
+	end loop;
 	
-		
+	-- apaga as entradas da responsavel_por com a categoria a eliminar
+	delete from responsavel_por r where r.nome_categoria = cat.var;
+	
+	-- apaga as entradas da tem_outra com a categoria a eliminar
+	delete from tem_outra t 
+	where t.nome_categoria = cat_var or t.super_categoria = cat_var;
+	
+	-- apaga as entradas da tabela categoria e da super ou simples
+	delete from super_categoria s where s.nome_categoria = cat_var;
+	delete from categoria_simples c where c.nome_categoria = cat_var;
+	delete from categoria c where c.nome_categoria = cat_var; 
 end
 $$ language plpgsql
