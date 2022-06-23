@@ -87,3 +87,5 @@ create index if not exists tem_categoria_nome_cat_index on tem_categoria (nome_c
 -- Cria-se um índice para o atributo descrição da tabela produto para ajudar a filtragem
 -- da mesma por este atibuto, dado que se procura um padrão e não uma igualdade escolheu-se
 -- criar um índice do tipo B+tree.
+-- Criou-se também um índice para o atributo nome_categoria da tabela tem_categoria
+-- para ajudar na agregação para o GROUP BY
