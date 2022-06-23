@@ -136,3 +136,28 @@ create table evento_reposicao (
                              references planograma(ean, nro, num_serie, fabricante),
     constraint fk_evrep_ret foreign key(tin) references retalhista(tin)
 );
+
+
+
+create or replace function eliminacao_categoria(cat_var varchar(80)) returns void
+as $$
+declare 
+	array_ean int array;
+	
+begin
+	-- obtem produtos com a categoria a eliminar
+    select array_append(array_ean, ean)
+    from produto 
+    where nome_categoria = cat_var;
+	
+	-- apaga os planogramas, os eventos_reposicao e as prateleiras
+	foreach ean slice 1 in array array_ean
+	loop
+		delete from evento_reposicao.e where e.ean = ean;
+		delete from planograma.p where p.ean = ean;
+		delete from prateleira.p where p.ean = ean;
+	end loop
+	
+		
+end
+$$ language plpgsql
