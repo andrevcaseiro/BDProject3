@@ -205,27 +205,3 @@ def list_subcategories():
     finally:
         cursor.close()
         dbConn.close()
-
-
-@app.route("/update", methods=["POST"])
-def update_balance():
-    dbConn = None
-    cursor = None
-    try:
-        dbConn = psycopg2.connect(DB_CONNECTION_STRING)
-        cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        nome_categoria = request.form["nome_categoria"]
-        query = "INSERT INTO categoria VALUES (%s);"
-        #query = "DELETE FROM categoria WHERE nome_categoria = %s"
-        data = (nome_categoria, )
-        cursor.execute(query, data)
-        return query
-    except Exception as e:
-        return str(e)
-    finally:
-        dbConn.commit()
-        cursor.close()
-        dbConn.close()
-
-
-CGIHandler().run(app)
