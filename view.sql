@@ -1,4 +1,4 @@
-create materialized view vendas(ean, cat, ano, trimestre, mes, dia_mes, dia_semana, distrito, concelho, unidades) 
+create view vendas(ean, cat, ano, trimestre, mes, dia_mes, dia_semana, distrito, concelho, unidades) 
 as 
 select o.ean as ean,
 	o.nome_categoria as cat,
