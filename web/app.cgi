@@ -47,25 +47,7 @@ def list_categories():
                 elif action == "delete":
                     try:
                         data = {"cat": request.form["nome_categoria"]}
-                        query = "DELETE FROM evento_reposicao WHERE ean IN (SELECT ean FROM produto WHERE nome_categoria = %(cat)s);"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM responsavel_por WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM planograma WHERE ean IN (SELECT ean FROM produto WHERE nome_categoria = %(cat)s);"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM prateleira WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM tem_categoria WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM produto WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM tem_outra WHERE nome_categoria = %(cat)s OR super_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM super_categoria WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM categoria_simples WHERE nome_categoria = %(cat)s;"
-                        cursor.execute(query, data)
-                        query = "DELETE FROM categoria WHERE nome_categoria = %(cat)s;"
+                        query = "call elimina_categoria(%(cat)s);"
                         cursor.execute(query, data)
                         message = f"Categoria removida: {data['cat']}"
                     except Exception as e:
