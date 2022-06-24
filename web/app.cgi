@@ -34,8 +34,10 @@ def list_categories():
                 action = request.form["action"]
                 if action == "insert":
                     try:
-                        query = "INSERT INTO categoria VALUES (%s);"
                         data = (request.form["nome_categoria"], )
+                        query = "INSERT INTO categoria VALUES (%s);"
+                        cursor.execute(query, data)
+                        query = "INSERT INTO categoria_simples VALUES (%s);"
                         cursor.execute(query, data)
                         message = f"Nova categoria inserida: {data[0]}"
                     except Exception as e:
@@ -44,10 +46,28 @@ def list_categories():
                         dbConn.commit()
                 elif action == "delete":
                     try:
-                        query = "DELETE FROM categoria WHERE nome_categoria = %s;"
-                        data = (request.form["nome_categoria"], )
+                        data = {"cat": request.form["nome_categoria"]}
+                        query = "DELETE FROM evento_reposicao WHERE ean IN (SELECT ean FROM produto WHERE nome_categoria = %(cat)s);"
                         cursor.execute(query, data)
-                        message = f"Categoria removida: {data[0]}"
+                        query = "DELETE FROM responsavel_por WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM planograma WHERE ean IN (SELECT ean FROM produto WHERE nome_categoria = %(cat)s);"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM prateleira WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM tem_categoria WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM produto WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM tem_outra WHERE nome_categoria = %(cat)s OR super_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM super_categoria WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM categoria_simples WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        query = "DELETE FROM categoria WHERE nome_categoria = %(cat)s;"
+                        cursor.execute(query, data)
+                        message = f"Categoria removida: {data['cat']}"
                     except Exception as e:
                         message = f"Falha ao remover categoria: {e}"
                     finally:
