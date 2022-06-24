@@ -205,3 +205,5 @@ def list_subcategories():
     finally:
         cursor.close()
         dbConn.close()
+
+CGIHandler().run(app)
