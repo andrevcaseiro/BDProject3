@@ -139,11 +139,11 @@ create table evento_reposicao (
 
 
 
-create or replace function eliminacao_categoria(cat_var varchar(80)) returns void
+create or replace procedure eliminacao_categoria(cat_var varchar(80))
 as $$
 declare
-	num int;
-	array_ean int array;
+	num bigint;
+	array_ean bigint array;
 begin
 	-- obtem produtos com a categoria a eliminar
     select array_append(array_ean, ean)
@@ -171,6 +171,6 @@ begin
 	-- apaga as entradas da tabela categoria e da super ou simples
 	delete from super_categoria s where s.nome_categoria = cat_var;
 	delete from categoria_simples c where c.nome_categoria = cat_var;
-	delete from categoria c where c.nome_categoria = cat_var; 
+	delete from categoria c where c.nome_categoria = cat_var; 	
 end
 $$ language plpgsql
