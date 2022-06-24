@@ -34,8 +34,10 @@ def list_categories():
                 action = request.form["action"]
                 if action == "insert":
                     try:
-                        query = "INSERT INTO categoria VALUES (%s);"
                         data = (request.form["nome_categoria"], )
+                        query = "INSERT INTO categoria VALUES (%s);"
+                        cursor.execute(query, data)
+                        query = "INSERT INTO categoria_simples VALUES (%s);"
                         cursor.execute(query, data)
                         message = f"Nova categoria inserida: {data[0]}"
                     except Exception as e:
@@ -44,10 +46,10 @@ def list_categories():
                         dbConn.commit()
                 elif action == "delete":
                     try:
-                        query = "DELETE FROM categoria WHERE nome_categoria = %s;"
-                        data = (request.form["nome_categoria"], )
+                        data = {"cat": request.form["nome_categoria"]}
+                        query = "call elimina_categoria(%(cat)s);"
                         cursor.execute(query, data)
-                        message = f"Categoria removida: {data[0]}"
+                        message = f"Categoria removida: {data['cat']}"
                     except Exception as e:
                         message = f"Falha ao remover categoria: {e}"
                     finally:
