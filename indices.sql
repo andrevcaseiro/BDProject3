@@ -24,7 +24,7 @@ where p.nome_categoria = 'CATEGORIA_5'
 ---------------------------------------------------------------------------------
 
 create index if not exists respor_cat_index on responsavel_por using hash (nome_categoria);
-create index if not exists retalhista_nome_index on retalhista (nome_retalhista);
+create index if not exists retalhista_nome_index on retalhista using hash (tin);
 
 -- Criou-se um índice para o atributo nome_categoria da tabela responsavel_por, 
 -- do tipo hash pois queremos testar uma igualdade. Escolheu-se criar o índice 
@@ -40,8 +40,8 @@ create index if not exists retalhista_nome_index on retalhista (nome_retalhista)
 -- 2 --
 SELECT T.nome_categoria, count(T.ean)
 FROM produto P, tem_categoria T
-WHERE P.nome_categoria = T.nome_categoria and P.descricao like 'D%'
-GROUP BY T.nome_categoria
+WHERE P.nome_categoria = T.nome_categoria and P.descricao like 'DESCRICAO\_PRODUTO\_3%' escape '\'
+GROUP BY T.nome_categoria;
 
 -- Índices que se podia pensar criar:
 --   - um de tipo hash na tabela produto para o nome_categoria;
@@ -82,7 +82,7 @@ WHERE P.descricao like 'DESCRICAO_PRODUTO_1_'
 ----------------------------------------------------------------------------------
 
 create index if not exists produto_descr_index on produto (descricao);
-create index if not exists tem_categoria_nome_cat_index on tem_categoria (nome_categoria);
+create index if not exists tem_categoria_nome_cat_index on tem_categoria (nome_categoria, ean);
 
 -- Cria-se um índice para o atributo descrição da tabela produto para ajudar a filtragem
 -- da mesma por este atibuto, dado que se procura um padrão e não uma igualdade escolheu-se
