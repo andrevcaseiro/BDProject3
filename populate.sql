@@ -138,6 +138,55 @@ create table evento_reposicao (
 );
 
 --------------------------------------------------
+--  Procedure for category deletion --
+--------------------------------------------------
+drop procedure elimina_categoria(character varying);
+
+create or replace procedure elimina_categoria(cat categoria.nome_categoria%type)
+language plpgsql
+as $$
+declare
+	num produto.ean%type;
+	sub_cat categoria.nome_categoria%type;
+begin
+	
+	for num in
+		select p.ean
+    	from tem_categoria p
+    	where p.nome_categoria = cat
+	loop
+		delete from evento_reposicao e where e.ean = num;
+		delete from planograma p where p.ean = num;
+		delete from tem_categoria t where t.ean = num;
+		delete from produto p where p.ean = num;
+	end loop;
+	
+	for sub_cat in
+		WITH RECURSIVE search_tree(super_categoria, nome_categoria) AS (
+            SELECT super_categoria, nome_categoria
+            FROM tem_outra
+            WHERE super_categoria = cat
+        UNION ALL
+            SELECT t.super_categoria, t.nome_categoria
+            FROM tem_outra t, search_tree st
+            WHERE t.super_categoria = st.nome_categoria
+        )
+        VALUES (cat)
+		UNION ALL
+		SELECT nome_categoria FROM search_tree
+	loop
+		delete from tem_outra t where t.super_categoria = sub_cat or t.nome_categoria = sub_cat;
+		delete from responsavel_por r where r.nome_categoria = sub_cat;
+		delete from prateleira p where p.nome_categoria = sub_cat;
+		delete from super_categoria c where c.nome_categoria = sub_cat;
+		delete from categoria_simples c where c.nome_categoria = sub_cat;
+		delete from categoria c where c.nome_categoria = sub_cat;
+	end loop;
+
+end
+$$;
+
+--------------------------------------------------
 -- Populate tables, generated using seed 31736 --
 --------------------------------------------------
 
@@ -16713,8 +16762,17 @@ insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021
 insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021.044', 6, 12);
 insert into evento_reposicao values (6226770340491, 6, 24, 'FABRICANTE_9', '2021.276', 3, 12);
 
+insert into categoria values ('CATEGORIA_9999999');
+insert into categoria_simples values ('CATEGORIA_9999999');
+insert into produto values (3786180217281, 'CATEGORIA_9999999', 'DESCRICAO_PRODUTO_9999999');
+insert into tem_categoria values (3786180217281, 'CATEGORIA_9999999');
+
 insert into retalhista values (9999999, 'RETALHISTA_9999999');
+insert into produto values (5374220564091, 'CATEGORIA_9999999', 'DESCRICAO_PRODUTO_9999998');
 insert into ivm values (9999999, 'FABRICANTE_9999999');
+insert into prateleira values (0, 9999999, 'FABRICANTE_9999999', 13, 'CATEGORIA_9999999');
+insert into planograma values (5374220564091, 0, 9999999, 'FABRICANTE_9999999', 2, 19);
+insert into evento_reposicao values (5374220564091, 0, 9999999, 'FABRICANTE_9999999', '2022.001', 6, 9999999);
 insert into responsavel_por values ('CATEGORIA_2', 9999999, 9999999, 'FABRICANTE_9999999');
 insert into responsavel_por values ('CATEGORIA_3', 9999999, 9999999, 'FABRICANTE_9999999');
 insert into responsavel_por values ('CATEGORIA_4', 9999999, 9999999, 'FABRICANTE_9999999');
@@ -16769,9 +16827,5 @@ insert into responsavel_por values ('CATEGORIA_69', 9999999, 9999999, 'FABRICANT
 insert into responsavel_por values ('CATEGORIA_70', 9999999, 9999999, 'FABRICANTE_9999999');
 insert into responsavel_por values ('CATEGORIA_71', 9999999, 9999999, 'FABRICANTE_9999999');
 insert into responsavel_por values ('CATEGORIA_72', 9999999, 9999999, 'FABRICANTE_9999999');
+insert into responsavel_por values ('CATEGORIA_9999999', 9999999, 9999999, 'FABRICANTE_9999999');
 
-insert into produto values (3786180217281, 'CATEGORIA_2', 'DESCRICAO_PRODUTO_9999999');
-
-insert into produto values (5374220564091, 'CATEGORIA_2', 'DESCRICAO_PRODUTO_9999998');
-insert into planograma values (5374220564091, 0, 0, 'FABRICANTE_0', 1, 13);
-insert into evento_reposicao values (5374220564091, 0, 0, 'FABRICANTE_0', '2022.001', 5, 9999999);

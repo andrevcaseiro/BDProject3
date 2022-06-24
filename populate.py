@@ -115,26 +115,35 @@ with open("populate.sql", "w") as f:
             
             f.write("\n")
     
-    # Create a retailer responsible for all simple categories
-    ret = (9999999, )
-    insert(f, "retalhista", ret + (f'RETALHISTA_9999999', ))
-    ivm = (9999999, f"FABRICANTE_{9999999}")
-    insert(f, "ivm", ivm)
-    for cat in simpleCats:
-        insert(f, "responsavel_por", cat + ret + ivm)
-    f.write("\n")
-    
     # Create a product that was never resupplied
+    cat = (f"CATEGORIA_9999999", )
+    insert(f, "categoria", cat)
+    categories.append(cat)
+    insert(f, "categoria_simples", cat)
+    simpleCats.append(cat)
     prod = (randint(1000000000000, 9999999999999), )
-    insert(f, "produto", prod + simpleCats[0] + (f'DESCRICAO_PRODUTO_9999999', ))
+    insert(f, "produto", prod + cat + (f'DESCRICAO_PRODUTO_9999999', ))
+    insert(f, "tem_categoria", prod + cat)
     f.write("\n")
 
     # Create a product that was always resupplied by the same retailer
+    ret = (9999999, )
+    insert(f, "retalhista", ret + (f'RETALHISTA_9999999', ))
     prod = (randint(1000000000000, 9999999999999), )
-    insert(f, "produto", prod + simpleCats[0] + (f'DESCRICAO_PRODUTO_9999998', ))
-    plan = prod + (0, ) + ivms[0]
+    insert(f, "produto", prod + cat + (f'DESCRICAO_PRODUTO_9999998', ))
+    ivm = (9999999, f"FABRICANTE_{9999999}")
+    insert(f, "ivm", ivm)
+    shelf = (0, ) + ivm
+    insert(f, "prateleira", shelf + (randrange(10, 30), ) + cat)
+    plan = prod + shelf
     insert(f, "planograma", plan + (randint(1, 5), randint(7, 30)))
     insert(f, "evento_reposicao", plan + (f"2022.001", randint(2, 7)) + ret)
+
+    # Create a retailer responsible for all simple categories
+    for cat in simpleCats:
+        insert(f, "responsavel_por", cat + ret + ivm)
+    f.write("\n")
+
 
 print(f"Categories: {len(categories)}")
 print(f"Products: {len(products)}")
