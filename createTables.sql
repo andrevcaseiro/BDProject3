@@ -137,40 +137,51 @@ create table evento_reposicao (
     constraint fk_evrep_ret foreign key(tin) references retalhista(tin)
 );
 
+--------------------------------------------------
+--  Procedure for category deletion --
+--------------------------------------------------
+drop procedure elimina_categoria(character varying);
 
-
-create or replace procedure eliminacao_categoria(cat_var varchar(80))
+create or replace procedure elimina_categoria(cat categoria.nome_categoria%type)
+language plpgsql
 as $$
 declare
-	num bigint;
-	array_ean bigint array;
+	num produto.ean%type;
+	sub_cat categoria.nome_categoria%type;
 begin
-	-- obtem produtos com a categoria a eliminar
-    select array_append(array_ean, ean)
-    from produto p
-    where p.nome_categoria = cat_var;
 	
-	-- apaga  os eventos_reposicao, os planogramas, as prateleiras, 
-	-- as entradas da tem_categoria e os produtos
-	foreach num slice 1 in array array_ean
+	for num in
+		select p.ean
+    	from tem_categoria p
+    	where p.nome_categoria = cat
 	loop
 		delete from evento_reposicao e where e.ean = num;
 		delete from planograma p where p.ean = num;
-		delete from prateleira p where p.ean = num;
 		delete from tem_categoria t where t.ean = num;
 		delete from produto p where p.ean = num;
 	end loop;
 	
-	-- apaga as entradas da responsavel_por com a categoria a eliminar
-	delete from responsavel_por r where r.nome_categoria = cat.var;
-	
-	-- apaga as entradas da tem_outra com a categoria a eliminar
-	delete from tem_outra t 
-	where t.nome_categoria = cat_var or t.super_categoria = cat_var;
-	
-	-- apaga as entradas da tabela categoria e da super ou simples
-	delete from super_categoria s where s.nome_categoria = cat_var;
-	delete from categoria_simples c where c.nome_categoria = cat_var;
-	delete from categoria c where c.nome_categoria = cat_var; 	
+	for sub_cat in
+		WITH RECURSIVE search_tree(super_categoria, nome_categoria) AS (
+            SELECT super_categoria, nome_categoria
+            FROM tem_outra
+            WHERE super_categoria = cat
+        UNION ALL
+            SELECT t.super_categoria, t.nome_categoria
+            FROM tem_outra t, search_tree st
+            WHERE t.super_categoria = st.nome_categoria
+        )
+        VALUES (cat)
+		UNION ALL
+		SELECT nome_categoria FROM search_tree
+	loop
+		delete from tem_outra t where t.super_categoria = sub_cat or t.nome_categoria = sub_cat;
+		delete from responsavel_por r where r.nome_categoria = sub_cat;
+		delete from prateleira p where p.nome_categoria = sub_cat;
+		delete from super_categoria c where c.nome_categoria = sub_cat;
+		delete from categoria_simples c where c.nome_categoria = sub_cat;
+		delete from categoria c where c.nome_categoria = sub_cat;
+	end loop;
+
 end
-$$ language plpgsql
+$$;
