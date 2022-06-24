@@ -15,21 +15,17 @@
     <hr>
     <h1>{{category}}</h1>
     <hr>
-    <h2>Lista das subcategorias para {{category}}</h2>
-    {% if cursor is iterable %}
+    <h2>Hierarquia das subcategorias de {{category}}</h2>
     <ul>
-        {%- for record in cursor recursive %}
+        {%- for cat in [category] recursive %}
         <li>
-            {{ record[0] }}
-            {% if record[1] is iterable%}
-            <ul class>{{ loop(record[1]) }}</ul>
+            {{ cat }}
+            {% if cat in tree.keys() %}
+            <ul class>{{ loop(tree[cat]) }}</ul>
             {%- endif %}
         </li>
         {%- endfor %}
     </ul>
-    {% else %}
-    <p> Erro: não foi possível obter dados da base de dados!</p>
-    {% endif %}
 </body>
 
 </html>

@@ -169,26 +169,36 @@ def list_eventos():
 
 @app.route("/subcategorias")
 def list_subcategories():
-
-    def find_subcategories(super_categoria):
-        query = "SELECT nome_categoria FROM tem_outra WHERE super_categoria = %s;"
-        data = (super_categoria, )
-        cursor.execute(query, data)
-        res = []
-        for cat in list(cursor):
-            res.append((cat[0], find_subcategories(cat[0])))
-
-        return res
-
     dbConn = None
     cursor = None
     try:
         dbConn = psycopg2.connect(DB_CONNECTION_STRING)
         cursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cat = request.args["nome_categoria"]
-        subcategories = find_subcategories(cat)
+
+        query = """WITH RECURSIVE search_tree(super_categoria, nome_categoria) AS (
+            SELECT super_categoria, nome_categoria
+            FROM tem_outra
+            WHERE super_categoria = %s
+        UNION ALL
+            SELECT t.super_categoria, t.nome_categoria
+            FROM tem_outra t, search_tree st
+            WHERE t.super_categoria = st.nome_categoria
+        )
+        SELECT * FROM search_tree"""
+        data = (cat, )
+        cursor.execute(query, data)
+        tree = {}
+        for record in cursor.fetchall():
+            superCat = record["super_categoria"]
+            simpleCat = record["nome_categoria"]
+            if superCat in tree.keys():
+                tree[superCat].append(simpleCat)
+            else:
+                tree[superCat] = [simpleCat]
+
         return render_template("subcategorias.html",
-                               cursor=subcategories,
+                               tree=tree,
                                category=cat)
     except Exception as e:
         return str(e)  # Renders a page with the error.
