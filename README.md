@@ -1,8 +1,11 @@
-# BDProject3
-Third databases (BD) project.
+# Databases course project
 
-# Duvidas
-1- dia_mes vs mes
-2- aplicacao
-3- indices
-4- o resto....
+A postgresSQL database including data of Intelligent Vending Machines installed in supermarket by retailers.
+
+## Overview
+
+The database follows a simplified version of the following entity-association model diagram.
+
+![Entity-association model diagram](/diagram.svg)
+
+A python CGI app was created to interact with the database.
